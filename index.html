@@ -689,7 +689,9 @@ async function tune(n){
   store.set("etv:ch", cur);
   const ch = channels[cur], token = ++tuneToken;
   renderChannels(); osd(); msg(""); setStatic(true); hideBumper(true); if (powered) stripeWipe(.8);
-  vid.pause(); slotIdx = -1; watching = null; renderNow();
+  // fully drop the old stream so nothing (a tap, the OS media controls) can resume the previous channel
+  vid.pause(); vid.removeAttribute("src"); try{ vid.load(); }catch(e){}
+  slotIdx = -1; watching = null; renderNow();
 
   try{
     if (!lineups[ch.id]){
@@ -1175,7 +1177,7 @@ document.querySelectorAll("#tabbar button").forEach(b => b.onclick = () => showT
 showTab(store.get("etv:tab", "now"));
 $("full").onclick = () => { const el = $("tv"); (document.fullscreenElement ? document.exitFullscreen() : el.requestFullscreen?.())?.catch?.(() => {}); };
 $("guideBtn").onclick = () => { if (watching) lower(`${watching.title}${watching.year ? " (" + watching.year + ")" : ""}`); osd(); };
-$("tv").addEventListener("click", e => { if (powered && vid.paused && vid.src) vid.play().catch(() => {}); });
+$("tv").addEventListener("click", e => { if (powered && slotIdx >= 0 && vid.paused && vid.src) vid.play().catch(() => {}); });
 document.addEventListener("keydown", e => {
   if (e.target.tagName === "INPUT") return;
   if (e.key === "Escape" && guideOpen){ closeGuide(); return; }

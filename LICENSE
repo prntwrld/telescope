@@ -1,0 +1,45 @@
+MIT License
+
+Copyright (c) 2026 prntwrld
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+
+Credits and third-party content
+
+The MIT License above covers Télescope's own code (index.html). It does not
+cover the films, which Télescope does not host or redistribute: every film
+streams directly from the Internet Archive and remains under its own rights,
+as listed on its archive.org page.
+
+With thanks to:
+
+- The Internet Archive (https://archive.org), which hosts and streams every
+  film shown here and provides the search and metadata APIs Télescope uses.
+  Please support it: https://archive.org/donate
+- Prelinger Archives, collected by Rick Prelinger, the heart of archive.org's
+  Ephemeral Films collection.
+- A/V Geeks, Periscope Film, and the uploaders and archivists behind the
+  Educational Films and other archive.org collections Télescope searches.
+- The filmmakers, film boards and broadcasters whose work appears on the
+  channels.
+
+Fonts (loaded from Google Fonts, each under the SIL Open Font License 1.1):
+Pixelify Sans, VT323 and Fraunces.

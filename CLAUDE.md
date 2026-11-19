@@ -12,6 +12,7 @@ A channel-surfing web page that plays old films from the Internet Archive (archi
 - Filters skip borrow-only (access-restricted) items, home movies, raw stock-footage reels, outtakes, and films under 90 seconds or over 2 hours.
 - Video streams straight from archive.org; this site hosts only the page.
 - DVR controls: RESTART (R) starts the current film over; dragging the On-now progress bar moves around in the film (never ahead of live); when behind, films keep playing in order from their beginnings, and GO LIVE (L) jumps back with a static burst. Implemented as a per-channel clock offset (`drift`) plus `dvr` = seconds behind live.
+- Changing channel drops the old stream (removes `src`) so a tap on the screen, or phone media controls, can't resume the previous channel while the new one tunes.
 - Progress bar has a round thumb, elapsed/total times and a "drag to rewind" hint (hidden after first scrub).
 - Sound & transitions: Télescope's own 3-note chime (A4 · E5 · C#6, WebAudio; deliberately NOT NBC's G-E-C, which is a registered sound mark) plays on tune-in (browsers need a click first) and in bumpers. A 5-stripe left-to-right wipe plays on every channel change; between films, a ~3s bumper (stripes, logo, "Up next", chime) covers the next film loading.
 - Settings drawer: Start muted; Join films from the beginning (instead of live); Station bumpers & chime (on by default). AMBIENT mode (B) hides everything but the TV; Esc exits.
@@ -34,4 +35,5 @@ Note: much of the "Classics" material on archive.org is fan uploads that can dis
 ## Known limits / ideas
 - Must be served from a real web address (or opened as a local file in a desktop browser). iPhone Files preview and the Claude artifact preview won't run it.
 - Ideas not done yet: favorites (browser-only is easy; synced across devices needs a small backend); hide or reorder channels; a hand-curated "staff picks" channel; better quality scoring of search results; a shared server-side cache so every visitor doesn't hit archive.org's APIs.
+- License: MIT (c) prntwrld, in `LICENSE`, which also credits the Internet Archive, Prelinger Archives, other collections and the fonts; the license covers the code only, not the films.
 - Credit archive.org and Prelinger Archives on the page, and link to archive.org/donate. Don't copy another site's name or branding.
