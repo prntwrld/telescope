@@ -383,7 +383,7 @@ const BASE_CHANNELS = [
     q:'subject:(nature OR wildlife OR animals OR birds OR insects OR plants OR forests)' },
   { id:"deep", kw:/\b(seas?\b|ocean|marine|underwater|undersea|reef|coral|fish\b|fishes|whale|dolphin|porpoise|tides?\b|tide pool|seashore|plankton|octop|squid|shark|crab|lobster|kelp|seaweed|aquatic|aquarium|starfish|jellyfish|oyster|clam|salmon|divers?\b|diving|seals?\b|sea life)/i,   group:"Living things", name:"Deep Water", theme:"Oceans, reefs and sea life.",
     q:'subject:(oceanography OR "marine biology" OR "marine animals" OR "marine life" OR "marine fauna" OR "sea life" OR underwater OR undersea OR "coral reefs" OR fishes OR whales OR dolphins OR "tide pools" OR seashore)' },
-  { id:"micro", kw:/\b(microscop|micro|cells?\b|plankton|crystal|protozo|amoeba|bacteri|microb|germ|organism|biolog|virus|magnif|parameci|algae|molds?\b|yeast|blood)/i,  group:"Living things", name:"Microcosm", theme:"Life under the microscope.",
+  { id:"micro", kw:/\b(embryo|embryolog|development of|developing|fertiliz|mitosis|meiosis|chromosom|zygote|tissues?\b|reproduct|egg cells?|microscop|micro|cells?\b|plankton|crystal|protozo|amoeba|bacteri|microb|germ|organism|biolog|virus|magnif|parameci|algae|molds?\b|yeast|blood)/i,  group:"Living things", name:"Microcosm", theme:"Life under the microscope.",
     q:'subject:(microscope OR microscopic OR cells OR plankton OR crystals OR biology OR protozoa)' },
   { id:"cosmos", kw:/\b(astronom|space|universe|planet|solar|stars?\b|moon|sun\b|galax|comet|rocket|orbit|satellite|telescope|cosmi|mars\b|jupiter|nasa|apollo|astronaut|eclipse|meteor)/i, group:"Earth & sky", name:"Cosmos 16mm", theme:"Stars, planets and the space age.",
     q:'subject:(astronomy OR space OR universe OR planets OR "solar system" OR stars)' },
@@ -445,7 +445,7 @@ try{
   const t = today();
   for (let i = localStorage.length - 1; i >= 0; i--){
     const k = localStorage.key(i);
-    if (k && ((k.startsWith("tv13:") || k.startsWith("tv14:") || k.startsWith("tv15:") || k.startsWith("tv16:")) || (k.startsWith("tv17:lineup:") && !k.endsWith(":" + t)))) localStorage.removeItem(k);
+    if (k && ((k.startsWith("tv13:") || k.startsWith("tv14:") || k.startsWith("tv15:") || k.startsWith("tv16:") || k.startsWith("tv17:")) || (k.startsWith("tv18:lineup:") && !k.endsWith(":" + t)))) localStorage.removeItem(k);
   }
 }catch(e){}
 
@@ -568,7 +568,7 @@ function pickFiles(files){
 }
 
 async function buildLineup(ch, onProgress){
-  const key = `tv17:lineup:${ch.id}:${today()}`;
+  const key = `tv18:lineup:${ch.id}:${today()}`;
   const cached = store.get(key, null);
   if (cached && cached.length) return cached;
 
@@ -1088,7 +1088,7 @@ $("addForm").addEventListener("submit", e => {
 });
 function removeChannel(id){
   store.set("etv:custom", store.get("etv:custom", []).filter(c => c.id !== id));
-  store.del(`tv17:lineup:${id}:${today()}`);
+  store.del(`tv18:lineup:${id}:${today()}`);
   const wasCur = channels[cur].id === id;
   channels = channels.filter(c => c.id !== id);
   if (cur >= channels.length) cur = channels.length - 1;
