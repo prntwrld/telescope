@@ -38,4 +38,5 @@ Note: much of the "Classics" material on archive.org is fan uploads that can dis
 - Must be served from a real web address (or opened as a local file in a desktop browser). iPhone Files preview and the Claude artifact preview won't run it.
 - Ideas not done yet: favorites (browser-only is easy; synced across devices needs a small backend); hide or reorder channels; a hand-curated "staff picks" channel; better quality scoring of search results; a shared server-side cache so every visitor doesn't hit archive.org's APIs.
 - License: MIT (c) prntwrld, in `LICENSE`, which also credits the Internet Archive, Prelinger Archives, other collections and the fonts; the license covers the code only, not the films.
+- Live site: https://prntwrld.github.io/telescope/ (GitHub Pages from `main`), linked in Settings → About.
 - Credit archive.org and Prelinger Archives on the page, and link to archive.org/donate. Don't copy another site's name or branding.
