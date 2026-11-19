@@ -379,25 +379,25 @@
 // archive.org's Ephemeral Films umbrella plus its main member collections (some items list only one)
 const COLLECTIONS = 'collection:(ephemera OR prelinger OR avgeeks OR educationalfilms OR periscopefilm)';
 const BASE_CHANNELS = [
-  { id:"field",  group:"Living things", name:"Field & Forest", theme:"Wildlife, birds, insects and plants.",
+  { id:"field", kw:/\b(nature|wildlife|animal|bird|insect|plant|forest|tree|flower|mammal|bees?\b|butterfl|spider|frogs?\b|reptile|deer|bears?\b|wolf|wolves|fox|owl|ecolog|habitat|woods|meadow|pond|swamp|marsh|seeds?\b|leaf|leaves|botan|creature|squirrel|beaver|nest)/i,  group:"Living things", name:"Field & Forest", theme:"Wildlife, birds, insects and plants.",
     q:'subject:(nature OR wildlife OR animals OR birds OR insects OR plants OR forests)' },
-  { id:"deep",   group:"Living things", name:"Deep Water", theme:"Oceans, reefs and sea life.",
+  { id:"deep", kw:/\b(seas?\b|ocean|marine|underwater|undersea|reef|coral|fish\b|fishes|whale|dolphin|porpoise|tides?\b|tide pool|seashore|plankton|octop|squid|shark|crab|lobster|kelp|seaweed|aquatic|aquarium|starfish|jellyfish|oyster|clam|salmon|divers?\b|diving|seals?\b|sea life)/i,   group:"Living things", name:"Deep Water", theme:"Oceans, reefs and sea life.",
     q:'subject:(oceanography OR "marine biology" OR "marine animals" OR "marine life" OR "marine fauna" OR "sea life" OR underwater OR undersea OR "coral reefs" OR fishes OR whales OR dolphins OR "tide pools" OR seashore)' },
-  { id:"micro",  group:"Living things", name:"Microcosm", theme:"Life under the microscope.",
+  { id:"micro", kw:/\b(microscop|micro|cells?\b|plankton|crystal|protozo|amoeba|bacteri|microb|germ|organism|biolog|virus|magnif|parameci|algae|molds?\b|yeast|blood)/i,  group:"Living things", name:"Microcosm", theme:"Life under the microscope.",
     q:'subject:(microscope OR microscopic OR cells OR plankton OR crystals OR biology OR protozoa)' },
-  { id:"cosmos", group:"Earth & sky", name:"Cosmos 16mm", theme:"Stars, planets and the space age.",
+  { id:"cosmos", kw:/\b(astronom|space|universe|planet|solar|stars?\b|moon|sun\b|galax|comet|rocket|orbit|satellite|telescope|cosmi|mars\b|jupiter|nasa|apollo|astronaut|eclipse|meteor)/i, group:"Earth & sky", name:"Cosmos 16mm", theme:"Stars, planets and the space age.",
     q:'subject:(astronomy OR space OR universe OR planets OR "solar system" OR stars)' },
-  { id:"earth",  group:"Earth & sky", name:"Restless Earth", theme:"Volcanoes, glaciers and geology.",
+  { id:"earth", kw:/\b(geolog|volcan|earthquake|desert|glacier|erosion|mountain|rocks?\b|mineral|canyon|lava|fossil|caves?\b|landform|continent|ice age|earth\b|soil|sediment)/i,  group:"Earth & sky", name:"Restless Earth", theme:"Volcanoes, glaciers and geology.",
     q:'subject:(geology OR volcanoes OR earthquakes OR deserts OR glaciers OR erosion OR mountains)' },
-  { id:"drift",  group:"Earth & sky", name:"Drift", theme:"Clouds, rivers and landscapes.",
+  { id:"drift", kw:/\b(scener|landscape|cloud|time-?lapse|weather|river|lakes?\b|sky|skies|sunset|sunrise|storm|rain|snow|season|valley|countryside|waterfall|streams?\b|wind)/i,  group:"Earth & sky", name:"Drift", theme:"Clouds, rivers and landscapes.",
     q:'subject:(scenery OR landscapes OR clouds OR "time-lapse" OR timelapse OR weather OR rivers) AND collection:prelinger' },
-  { id:"travel", group:"Earth & sky", name:"Travelogue", theme:"Faraway places, decades ago.",
+  { id:"travel", kw:/\b(travel|tour|journey|trip|visit|voyage|countr|island|city|cities|abroad|vacation|holiday|places|world|people of|land of)/i, group:"Earth & sky", name:"Travelogue", theme:"Faraway places, decades ago.",
     q:'subject:(travelogues OR travelogue OR "description and travel" OR tourism)' },
-  { id:"atelier", group:"Making things", name:"Atelier", theme:"Art and how it gets made.", any:true,
+  { id:"atelier", kw:/\b(arts?\b|artist|paint|sculpt|museum|craft|potter|ceramic|weav|print|glass|design|draw|galler|christo|goldsworthy|calder|smithson|earthwork|installation|kinetic|creativ|loom|clay)/i, group:"Making things", name:"Atelier", theme:"Art and how it gets made.", any:true,
     q:'((subject:(art OR "art history" OR "modern art" OR painting OR painters OR sculpture OR sculptors OR artists OR museums OR crafts OR pottery OR ceramics OR weaving OR printmaking OR glassblowing OR "art--technique") AND collection:(ephemera OR prelinger OR avgeeks OR educationalfilms OR periscopefilm)) OR title:(Christo OR Goldsworthy OR Calder OR "Running Fence" OR "Valley Curtain" OR "Spiral Jetty" OR Smithson) OR subject:("land art" OR "environmental art" OR earthworks OR "installation art" OR "kinetic art" OR "art, modern")) AND year:[1930 TO 1999]' },
-  { id:"lab", group:"Making things", name:"Lab Hour", theme:"Classroom science experiments.",
+  { id:"lab", kw:/\b(physic|chemi|light|sound|magnet|electric|energy|experiment|scien|atom|heat|motion|force|gravity|laborator|waves?\b|matter|molecul)/i, group:"Making things", name:"Lab Hour", theme:"Classroom science experiments.",
     q:'subject:(physics OR chemistry OR light OR sound OR magnetism OR electricity OR energy OR experiments)' },
-  { id:"factory", group:"Making things", name:"Factory Floor", theme:"Machines and how things are made.",
+  { id:"factory", kw:/\b(manufactur|industr|machine|factor(y|ies)|technolog|made|making|assembl|production|steel|mills?\b|plant|engineer|process|workers?\b|automat|product)/i, group:"Making things", name:"Factory Floor", theme:"Machines and how things are made.",
     q:'subject:(manufacturing OR industry OR machinery OR factories OR "industrial films" OR technology)' },
   { id:"classics", group:"Broadcast", name:"Classics", theme:"Iconic nature and science TV.",
     q:'(title:(Attenborough OR Cousteau OR "Life on Earth" OR "Living Planet" OR "Trials of Life" OR "Private Life of Plants" OR "Life in the Freezer" OR "Undersea World" OR "Wild Kingdom" OR "Cosmos: A Personal Voyage" OR "Ways of Seeing" OR "Civilisation" OR "Connections" OR Microcosmos) OR creator:(Attenborough OR Cousteau OR "Carl Sagan" OR Sagan OR "National Geographic Society" OR "BBC Natural History Unit") OR subject:("national geographic specials (television program)" OR "nova (television program)" OR "nature (television program)")) AND year:[1950 TO 1999]', any:true },
@@ -419,7 +419,7 @@ function isJunk(md){
   return JUNK_RE.test(title) || /home movies|amateur films|stock footage|outtakes/i.test(subj);
 }
 // themed channels skip war, politics and newsreels (they sneak in through words like "sea" or "naval")
-const OFFTOPIC_Q = ' AND -subject:(war OR "world war" OR military OR navy OR naval OR army OR politics OR presidents OR propaganda OR newsreels OR elections OR "civil defense" OR drama OR dramatization OR "feature films" OR "musical films" OR "biographical films" OR advertising OR commercials OR "television commercials" OR "tv commercials" OR advertisements)';
+const OFFTOPIC_Q = ' AND -subject:(war OR "world war" OR military OR navy OR naval OR army OR politics OR presidents OR propaganda OR newsreels OR elections OR "civil defense" OR drama OR dramatization OR "feature films" OR "musical films" OR "biographical films" OR advertising OR commercials OR "television commercials" OR "tv commercials" OR advertisements OR "works progress administration" OR "new deal" OR "public works" OR depressions OR unemployment OR "city planning")';
 const MAX_YEAR = 1999;   // Télescope is for old films
 const POOL = 250;          // search hits considered per channel
 const TARGET_HOURS = 12;   // keep adding films until a channel has this much programming...
@@ -444,7 +444,7 @@ try{
   const t = today();
   for (let i = localStorage.length - 1; i >= 0; i--){
     const k = localStorage.key(i);
-    if (k && k.startsWith("tv13:lineup:") && !k.endsWith(":" + t)) localStorage.removeItem(k);
+    if (k && (k.startsWith("tv13:") || (k.startsWith("tv14:lineup:") && !k.endsWith(":" + t)))) localStorage.removeItem(k);
   }
 }catch(e){}
 
@@ -550,7 +550,7 @@ function pickFiles(files){
 }
 
 async function buildLineup(ch, onProgress){
-  const key = `tv13:lineup:${ch.id}:${today()}`;
+  const key = `tv14:lineup:${ch.id}:${today()}`;
   const cached = store.get(key, null);
   if (cached && cached.length) return cached;
 
@@ -570,6 +570,14 @@ async function buildLineup(ch, onProgress){
     if (String(first(md["access-restricted-item"])) === "true") return;
     if (isJunk(md)) return;
     if (themed && /\b(commercials?|advertis\w*|tv spots?)\b/i.test(String(first(md.title) || ""))) return;
+    if (themed && /\b(WPA|Works Progress|New Deal)\b|^\s*A Better [A-Z]/.test(String(first(md.title) || "") + " " + String(first(md.description) || ""))) return;
+    // on-topic check: the channel's subject must show up in the title/description, or in at least two
+    // subject tags (one stray tag, like "fishes" on a civic newsreel, isn't enough)
+    if (themed && ch.kw){
+      const td = stripHtml(String(first(md.title) || "")) + " " + stripHtml(String(first(md.description) || ""));
+      const subs = [].concat(md.subject || []).flatMap(x => String(x).split(/\s*;\s*/));
+      if (!ch.kw.test(td) && subs.filter(x => ch.kw.test(x)).length < 2) return;
+    }
     const yr = parseInt(String(first(md.year) || first(md.date) || "").slice(0, 4), 10);
     if (yr && yr > MAX_YEAR) return;
     const segs = pickFiles(m.files).map(f => ({ url: dlUrl(id, f.name), len: parseLen(f.length) }));
@@ -1056,7 +1064,7 @@ $("addForm").addEventListener("submit", e => {
 });
 function removeChannel(id){
   store.set("etv:custom", store.get("etv:custom", []).filter(c => c.id !== id));
-  store.del(`tv13:lineup:${id}:${today()}`);
+  store.del(`tv14:lineup:${id}:${today()}`);
   const wasCur = channels[cur].id === id;
   channels = channels.filter(c => c.id !== id);
   if (cur >= channels.length) cur = channels.length - 1;
