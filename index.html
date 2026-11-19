@@ -382,8 +382,8 @@ const COLLECTIONS = 'collection:(ephemera OR prelinger OR avgeeks OR educational
 const BASE_CHANNELS = [
   { id:"field", kw:/\b(nature|wildlife|animal|bird|insect|plant|forest|tree|flower|mammal|bees?\b|butterfl|spider|frogs?\b|reptile|deer|bears?\b|wolf|wolves|fox|owl|ecolog|habitat|woods|meadow|pond|swamp|marsh|seeds?\b|leaf|leaves|botan|creature|squirrel|beaver|nest)/i,  group:"Living things", name:"Field & Forest", theme:"Wildlife, birds, insects and plants.",
     q:'subject:(nature OR wildlife OR animals OR birds OR insects OR plants OR forests)' },
-  { id:"deep", kw:/\b(seas?\b|ocean|marine|underwater|undersea|reef|coral|fish\b|fishes|whale|dolphin|porpoise|tides?\b|tide pool|seashore|plankton|octop|squid|shark|crab|lobster|kelp|seaweed|aquatic|aquarium|starfish|jellyfish|oyster|clam|salmon|divers?\b|diving|seals?\b|sea life)/i,   group:"Living things", name:"Deep Water", theme:"Oceans, reefs and sea life.",
-    q:'subject:(oceanography OR "marine biology" OR "marine animals" OR "marine life" OR "marine fauna" OR "sea life" OR underwater OR undersea OR "coral reefs" OR fishes OR whales OR dolphins OR "tide pools" OR seashore)' },
+  { id:"deep", kw:/\b(seas?\b|ocean|marine|underwater|undersea|reef|coral|fish\b|fishes|whale|dolphin|porpoise|tides?\b|tide pool|seashore|plankton|octop|squid|shark|crab|lobster|kelp|seaweed|aquatic|aquarium|starfish|jellyfish|oyster|clam|salmon|divers?\b|diving|seals?\b|sea life)/i,   group:"Living things", name:"Deep Water", theme:"Oceans, reefs and sea life.", any:true,
+    q:'(subject:(oceanography OR "marine biology" OR "marine animals" OR "marine life" OR "marine fauna" OR "sea life" OR underwater OR undersea OR "coral reefs" OR fishes OR whales OR dolphins OR "tide pools" OR seashore)) AND -subject:(fishing OR angling OR "sport fishing") AND year:[1930 TO 1999]' },
   { id:"micro", kw:/\b(embryo|embryolog|development of|developing|fertiliz|mitosis|meiosis|chromosom|zygote|tissues?\b|reproduct|egg cells?|microscop|micro|cells?\b|plankton|crystal|protozo|amoeba|bacteri|microb|germ|organism|biolog|virus|magnif|parameci|algae|molds?\b|yeast|blood)/i,  group:"Living things", name:"Microcosm", theme:"Life under the microscope.",
     q:'subject:(microscope OR microscopic OR cells OR plankton OR crystals OR biology OR protozoa)' },
   { id:"cosmos", kw:/\b(astronom|space|universe|planet|solar|stars?\b|moon|sun\b|galax|comet|rocket|orbit|satellite|telescope|cosmi|mars\b|jupiter|nasa|apollo|astronaut|eclipse|meteor)/i, group:"Earth & sky", name:"Cosmos 16mm", theme:"Stars, planets and the space age.",
@@ -424,8 +424,8 @@ const OFFTOPIC_Q = ' AND -subject:(war OR "world war" OR military OR navy OR nav
 const TAPE_RE = /cassette|audio ?tape|vinyl|phonograph|\bLP\b|record album/i, MAX_TAPES = 1;
 const MAX_YEAR = 1999;   // Télescope is for old films
 const POOL = 2000;         // search hits considered per channel (shuffled daily, so each day draws a different mix)
-const TARGET_HOURS = 12;   // keep adding films until a channel has this much programming...
-const KEEP_MAX = 150;      // ...or this many films
+const TARGET_HOURS = 24;   // keep adding films until a channel has a full day of programming...
+const KEEP_MAX = 200;      // ...or this many films
 // "1939 NEW YORK WORLD'S FAIR NEWSREEL 72342" and "1939 New York World's Fair Newsreel" are the same film
 function titleKey(t){
   return String(t).toLowerCase().replace(/\(.*?\)|\[.*?\]/g, " ").replace(/\b(pf#?\s*)?[a-z]{0,3}\d{4,}\b/g, " ")
@@ -446,7 +446,7 @@ try{
   const t = today();
   for (let i = localStorage.length - 1; i >= 0; i--){
     const k = localStorage.key(i);
-    if (k && ((k.startsWith("tv13:") || k.startsWith("tv14:") || k.startsWith("tv15:") || k.startsWith("tv16:") || k.startsWith("tv17:")) || (k.startsWith("tv18:lineup:") && !k.endsWith(":" + t)))) localStorage.removeItem(k);
+    if (k && ((k.startsWith("tv13:") || k.startsWith("tv14:") || k.startsWith("tv15:") || k.startsWith("tv16:") || k.startsWith("tv17:") || k.startsWith("tv18:")) || (k.startsWith("tv19:lineup:") && !k.endsWith(":" + t)))) localStorage.removeItem(k);
   }
 }catch(e){}
 
@@ -568,8 +568,8 @@ function pickFiles(files){
     .filter(f => { const k = f.name.replace(/\.(ia|512kb)?\.?mp4$/i, ""); if (seen.has(k)) return false; seen.add(k); return true; });
 }
 
-async function buildLineup(ch, onProgress){
-  const key = `tv18:lineup:${ch.id}:${today()}`;
+async function buildLineup(ch, onProgress, onPartial){
+  const key = `tv19:lineup:${ch.id}:${today()}`;
   const cached = store.get(key, null);
   if (cached && cached.length) return cached;
 
@@ -615,7 +615,7 @@ async function buildLineup(ch, onProgress){
       id, title,
       year: String(first(md.year) || first(md.date) || "").slice(0, 4),
       by: shortBy(stripHtml([].concat(md.creator || md.sponsor || []).join(" / "))),
-      desc: stripHtml(first(md.description)).slice(0, 700),
+      desc: stripHtml(first(md.description)).slice(0, 500),
       segs
     });
   };
@@ -628,6 +628,8 @@ async function buildLineup(ch, onProgress){
       return m;
     });
     batch.forEach((id, j) => take(id, metas[j]));
+    // let the caller start playing early: films already placed never move as more are added
+    if (onPartial && lineup.length) onPartial(lineup.slice(), secs);
   }
   if (!lineup.length) throw new Error("Found films, but none are free to stream. They may be borrow-only on archive.org.");
   store.set(key, lineup);
@@ -755,24 +757,35 @@ async function tune(n){
   vid.pause(); vid.removeAttribute("src"); try{ vid.load(); }catch(e){}
   slotIdx = -1; watching = null; renderNow();
 
+  let started = false;
+  const start = () => {
+    started = true;
+    $("lower").classList.remove("on");
+    if (opt("fromStart", false)){
+      const L = lineups[ch.id], at = locate(L.tl, nowSec(ch.id));
+      shiftBack(ch.id, filmOffset(L, at));
+    }
+    playNow(token); updateLive();
+  };
   try{
     if (!lineups[ch.id]){
-      const lu = await buildLineup(ch, (d, t) => { if (token === tuneToken) lower(`TUNING… ${d}/${t}`); });
+      const lu = await buildLineup(ch, (d, t) => { if (token === tuneToken && !started) lower(`TUNING… ${d}/${t}`); },
+        // start as soon as the schedule reaches past the current time (plus a half-hour cushion); keep building after
+        (part, secs) => {
+          if (token !== tuneToken || started || secs < nowSec(ch.id) + 1800) return;
+          lineups[ch.id] = { lineup: part, tl: timeline(part) }; start();
+        });
       lineups[ch.id] = { lineup: lu, tl: timeline(lu) };
+      if (started && token === tuneToken){ renderNext(); return; }
     }
   }catch(e){
-    if (token !== tuneToken) return;
+    if (token !== tuneToken || started) return;
     setStatic(false);
     msg(`NO SIGNAL\n${e.message || "Couldn't reach archive.org."}`);
     return;
   }
   if (token !== tuneToken) return;
-  $("lower").classList.remove("on");
-  if (opt("fromStart", false)){
-    const L = lineups[ch.id], at = locate(L.tl, nowSec(ch.id));
-    shiftBack(ch.id, filmOffset(L, at));
-  }
-  playNow(token); updateLive();
+  start();
 }
 function restartFilm(){
   const ch = channels[cur], L = lineups[ch.id]; if (!L || slotIdx < 0) return;
@@ -1089,7 +1102,7 @@ $("addForm").addEventListener("submit", e => {
 });
 function removeChannel(id){
   store.set("etv:custom", store.get("etv:custom", []).filter(c => c.id !== id));
-  store.del(`tv18:lineup:${id}:${today()}`);
+  store.del(`tv19:lineup:${id}:${today()}`);
   const wasCur = channels[cur].id === id;
   channels = channels.filter(c => c.id !== id);
   if (cur >= channels.length) cur = channels.length - 1;
