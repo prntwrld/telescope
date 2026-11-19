@@ -422,7 +422,7 @@ function isJunk(md){
 const OFFTOPIC_Q = ' AND -subject:(war OR "world war" OR military OR navy OR naval OR army OR politics OR presidents OR propaganda OR newsreels OR elections OR "civil defense" OR drama OR dramatization OR "feature films" OR "musical films" OR "biographical films" OR advertising OR commercials OR "television commercials" OR "tv commercials" OR advertisements OR "works progress administration" OR "new deal" OR "public works" OR depressions OR unemployment OR "city planning")';
 const TAPE_RE = /cassette|audio ?tape|vinyl|phonograph|\bLP\b|record album/i, MAX_TAPES = 1;
 const MAX_YEAR = 1999;   // Télescope is for old films
-const POOL = 250;          // search hits considered per channel
+const POOL = 2000;         // search hits considered per channel (shuffled daily, so each day draws a different mix)
 const TARGET_HOURS = 12;   // keep adding films until a channel has this much programming...
 const KEEP_MAX = 150;      // ...or this many films
 // "1939 NEW YORK WORLD'S FAIR NEWSREEL 72342" and "1939 New York World's Fair Newsreel" are the same film
@@ -445,7 +445,7 @@ try{
   const t = today();
   for (let i = localStorage.length - 1; i >= 0; i--){
     const k = localStorage.key(i);
-    if (k && ((k.startsWith("tv13:") || k.startsWith("tv14:")) || (k.startsWith("tv15:lineup:") && !k.endsWith(":" + t)))) localStorage.removeItem(k);
+    if (k && ((k.startsWith("tv13:") || k.startsWith("tv14:") || k.startsWith("tv15:")) || (k.startsWith("tv16:lineup:") && !k.endsWith(":" + t)))) localStorage.removeItem(k);
   }
 }catch(e){}
 
@@ -551,7 +551,7 @@ function pickFiles(files){
 }
 
 async function buildLineup(ch, onProgress){
-  const key = `tv15:lineup:${ch.id}:${today()}`;
+  const key = `tv16:lineup:${ch.id}:${today()}`;
   const cached = store.get(key, null);
   if (cached && cached.length) return cached;
 
@@ -1069,7 +1069,7 @@ $("addForm").addEventListener("submit", e => {
 });
 function removeChannel(id){
   store.set("etv:custom", store.get("etv:custom", []).filter(c => c.id !== id));
-  store.del(`tv15:lineup:${id}:${today()}`);
+  store.del(`tv16:lineup:${id}:${today()}`);
   const wasCur = channels[cur].id === id;
   channels = channels.filter(c => c.id !== id);
   if (cur >= channels.length) cur = channels.length - 1;
