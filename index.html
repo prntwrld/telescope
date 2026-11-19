@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#0c1013">
 <title>Télescope</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=Pixelify+Sans:wght@400..700&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet">
@@ -25,11 +29,11 @@
   .set{padding:24px 28px;display:flex;flex-direction:column;justify-content:center;gap:14px;min-width:0;min-height:0}
   .screen-wrap{position:relative;border-radius:28px;overflow:hidden;background:#000;
     aspect-ratio:4/3;max-height:calc(100vh - 130px);max-width:calc((100vh - 130px) * 4 / 3);margin:0 auto;width:100%;
-    transition:border-radius .3s;
+    transition:border-radius .3s;isolation:isolate;transform:translateZ(0);
     box-shadow:0 0 0 10px #1f2830,0 0 0 12px #05070a,0 30px 60px rgba(0,0,0,.6);}
   video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;
     transition:filter .4s}
-  .warm video{filter:sepia(.28) saturate(.82) contrast(.94) brightness(.97) hue-rotate(-6deg)}
+  .warm video{filter:sepia(.5) saturate(.78) contrast(.9) brightness(.96) hue-rotate(-8deg)}
   .screen-wrap:not(.crt){border-radius:8px}
   .screen-wrap:not(.crt) .scan,.screen-wrap:not(.crt) .vignette{display:none}
   .scan{position:absolute;inset:0;pointer-events:none;z-index:7;
@@ -97,9 +101,11 @@
   .controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;font-family:var(--tv)}
   .controls button{background:var(--panel);color:var(--cream);border:1px solid var(--line);
     border-radius:8px;padding:6px 14px;font-size:20px}
-  .controls button:hover{border-color:var(--amber);color:var(--amber)}
-  .controls button.lit{color:var(--amber);border-color:var(--amber)}
+  @media (hover:hover){ .controls button:hover{border-color:#5a6670;color:#fff} }
+  .controls button.lit{color:#1a120a;background:var(--amber);border-color:var(--amber)}
+  .controls button:focus:not(:focus-visible){outline:none}
   .keys{text-align:center;color:var(--dim);font-size:13px}
+  @media (hover:none){.keys{display:none}}
 
   /* ---------- guide ---------- */
   aside{background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column;height:100vh;min-height:0}
@@ -119,7 +125,7 @@
   .tabbar button{background:none;border:0;color:var(--dim);display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;border-radius:8px}
   .tabbar button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
   .tabbar button span{font-family:var(--tv);font-size:calc(15px * var(--tvk,1));letter-spacing:.04em}
-  .tabbar button:hover{color:var(--cream)}
+  @media (hover:hover){.tabbar button:hover{color:var(--cream)}}
   .tabbar button.on{color:var(--amber)}
   @media (max-width:900px){aside{border-left:0;border-top:1px solid var(--line);height:auto}
     aside .views{overflow:visible} .tabbar{position:sticky;bottom:0}}
@@ -151,7 +157,7 @@
   .bar{height:5px;background:var(--line);border-radius:3px;overflow:hidden;pointer-events:none}
   .scrub:hover .bar{height:7px}
   .behind{font-family:var(--tv);font-size:calc(15px * var(--tvk,1));color:var(--rust);min-height:1em}
-  .controls button.livebtn.on{color:#ff6b5a;border-color:#ff6b5a}
+  .controls button.livebtn.on{color:#ff6b5a;border-color:#ff6b5a;background:var(--panel)}
   .set-row{display:flex;gap:10px;align-items:flex-start;font-size:14px;padding:5px 0;cursor:pointer}
   .set-row input{margin-top:3px;accent-color:var(--amber)}
   .set-row small{display:block;color:var(--dim);font-size:12px}
@@ -165,6 +171,18 @@
   body.ambient #ambientExit{display:block}
   body.ambient.idle #ambientExit{opacity:0;pointer-events:none}
   .bar i{display:block;height:100%;background:var(--amber);width:0}
+  body.tvfull{display:block;height:100vh;height:100dvh;overflow:hidden;background:#000}
+  body.tvfull aside, body.tvfull .keys, body.tvfull #ambient, body.tvfull #ambientExit{display:none !important}
+  body.tvfull .set{position:fixed;inset:0;padding:0;background:#000;display:flex;align-items:center;justify-content:center}
+  body.tvfull .screen-wrap{width:min(100vw, 100dvh * 4 / 3);height:auto;max-width:none;max-height:100dvh;margin:0;box-shadow:none}
+  body.tvfull .screen-wrap.crt{border-radius:22px}
+  body.tvfull .set > .controls{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:30;
+    width:max-content;max-width:calc(100vw - 24px);padding:8px;border-radius:14px;background:rgba(12,16,19,.86);border:1px solid var(--line);
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+  body.tvfull .set > .controls button{font-size:16px;padding:5px 10px}
+  body.tvfull.showctl .set > .controls{opacity:1;pointer-events:auto}
+  body.tvfull.nonative #full{display:none}
+  body.tvfull.fakefs #full{display:inline-block}
   ul{list-style:none;margin:0;padding:0}
   .chan li{display:flex;gap:10px;align-items:baseline;padding:4px 8px;border-radius:6px;cursor:pointer}
   .chan li:hover{background:#1a232a}
@@ -194,7 +212,18 @@
   .gbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:12px}
   .gdate{color:var(--amber);margin-left:12px;text-shadow:none}
   .gwrap{flex:1;display:grid;grid-template-columns:1fr 330px;gap:14px;min-height:0}
-  @media (max-width:900px){.gwrap{grid-template-columns:1fr;grid-template-rows:1fr auto}}
+  @media (max-width:900px) and (orientation:portrait){.gwrap{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}
+    .ginfo{max-height:34vh;max-height:34dvh}}
+  @media (max-width:900px){
+    .guide{padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom))}
+    .guide .brand{font-size:calc(22px * var(--tvk,1))}
+    .gbar{gap:6px;margin-bottom:8px} .gbar .controls{gap:6px} .gbar .controls button{font-size:15px;padding:4px 9px}
+    .ginfo{padding:12px 14px} .ginfo .gi-title{font-size:18px} .ginfo .gi-desc{font-size:13px;margin-top:8px}
+    .ginfo .gi-hint{display:none}}
+  @media (max-height:520px) and (orientation:landscape){
+    .guide{padding:8px calc(10px + env(safe-area-inset-right)) 8px calc(10px + env(safe-area-inset-left))}
+    .gwrap{grid-template-columns:minmax(0,1fr) 260px;grid-template-rows:minmax(0,1fr)}
+    .gbar{flex-wrap:nowrap} .gdate{display:none}}
   .grid{overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel);position:relative;min-height:0}
   .gtable{position:relative}
   .ghead{position:sticky;top:0;z-index:3;display:flex;height:34px;background:#0f151a;border-bottom:1px solid var(--line)}
@@ -205,13 +234,13 @@
   .grow.cur .gch{box-shadow:inset 3px 0 0 var(--amber)}
   .gch{position:sticky;left:0;z-index:2;flex:none;width:var(--chw);background:#111820;border-right:1px solid var(--line);
     display:flex;align-items:center;gap:10px;padding:0 10px;cursor:pointer}
-  .gch:hover{background:#17212a}
+  @media (hover:hover){.gch:hover{background:#17212a}}
   .gch .num{font-family:var(--tv);font-size:calc(22px * var(--tvk,1));color:var(--amber);width:26px;text-align:right}
   .gch .nm{font-family:var(--tv);font-size:calc(16px * var(--tvk,1));color:var(--cream);line-height:1.15}
   .gprogs{position:relative;flex:none}
   .gp{position:absolute;top:4px;bottom:4px;background:#1a242d;border:1px solid #26323b;border-radius:6px;padding:6px 9px;
     overflow:hidden;cursor:pointer;display:flex;flex-direction:column;justify-content:center;min-width:0}
-  .gp:hover{background:#22303b;border-color:#34424d}
+  @media (hover:hover){.gp:hover{background:#22303b;border-color:#34424d}}
   .gp.live{background:#1d2b25;border-color:#2f4a3c}
   .gp.past{opacity:.45}
   .gp.sel{outline:2px solid var(--amber);outline-offset:-2px;z-index:1}
@@ -1175,12 +1204,48 @@ function showTab(name){
 }
 document.querySelectorAll("#tabbar button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
 showTab(store.get("etv:tab", "now"));
-$("full").onclick = () => { const el = $("tv"); (document.fullscreenElement ? document.exitFullscreen() : el.requestFullscreen?.())?.catch?.(() => {}); };
+/* fullscreen: native where the browser allows it (whole page, so the guide and controls still work);
+   iPhone Safari only allows it for bare video, so there we fake it with the same TV-fills-screen layout */
+const docEl = document.documentElement;
+const nativeFS = !!(docEl.requestFullscreen || docEl.webkitRequestFullscreen);
+const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+const sideways = matchMedia("(orientation:landscape) and (max-height:520px)");
+document.body.classList.toggle("nonative", !nativeFS);
+let ctlT;
+function showCtl(){ if (!document.body.classList.contains("tvfull")) return;
+  document.body.classList.add("showctl"); clearTimeout(ctlT); ctlT = setTimeout(() => document.body.classList.remove("showctl"), 3500); }
+function layoutMode(){
+  const fake = document.body.classList.contains("fakefs");
+  const on = !!fsEl() || fake || sideways.matches;
+  document.body.classList.toggle("tvfull", on);
+  if (!on) document.body.classList.remove("showctl");
+  $("full").classList.toggle("lit", !!fsEl() || fake);
+  $("full").textContent = (fsEl() || fake) ? "EXIT FULL" : "FULL";
+}
+function toggleFull(){
+  if (fsEl()){ (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+  if (document.body.classList.contains("fakefs")){ document.body.classList.remove("fakefs"); layoutMode(); return; }
+  if (nativeFS){
+    const r = (docEl.requestFullscreen || docEl.webkitRequestFullscreen).call(docEl);
+    Promise.resolve(r).then(() => { try{ screen.orientation.lock("landscape").catch(() => {}); }catch(e){} })
+      .catch(() => { document.body.classList.add("fakefs"); layoutMode(); });
+  } else { document.body.classList.add("fakefs"); layoutMode(); }
+  showCtl();
+}
+$("full").onclick = toggleFull;
+document.addEventListener("fullscreenchange", layoutMode);
+document.addEventListener("webkitfullscreenchange", layoutMode);
+(sideways.addEventListener ? sideways.addEventListener("change", layoutMode) : sideways.addListener(layoutMode));
+layoutMode();
+$("tv").addEventListener("click", showCtl);
+document.querySelector(".set > .controls").addEventListener("click", showCtl);
+document.addEventListener("mousemove", e => { if (document.body.classList.contains("tvfull") && e.movementY + e.movementX !== 0) showCtl(); });
 $("guideBtn").onclick = () => { if (watching) lower(`${watching.title}${watching.year ? " (" + watching.year + ")" : ""}`); osd(); };
 $("tv").addEventListener("click", e => { if (powered && slotIdx >= 0 && vid.paused && vid.src) vid.play().catch(() => {}); });
 document.addEventListener("keydown", e => {
   if (e.target.tagName === "INPUT") return;
   if (e.key === "Escape" && guideOpen){ closeGuide(); return; }
+  if (e.key === "Escape" && document.body.classList.contains("fakefs")){ toggleFull(); return; }
   if (e.key === "Escape" && document.body.classList.contains("ambient")){ setAmbient(false); return; }
   if ((e.key === "b" || e.key === "B")){ $("ambient").click(); return; }
   if (e.key === "g" || e.key === "G"){ guideOpen ? closeGuide() : openGuide(); return; }

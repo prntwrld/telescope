@@ -17,6 +17,7 @@ A channel-surfing web page that plays old films from the Internet Archive (archi
 - Sound & transitions: Télescope's own 3-note chime (A4 · E5 · C#6, WebAudio; deliberately NOT NBC's G-E-C, which is a registered sound mark) plays on tune-in (browsers need a click first) and in bumpers. A 5-stripe left-to-right wipe plays on every channel change; between films, a ~3s bumper (stripes, logo, "Up next", chime) covers the next film loading.
 - Settings drawer: Start muted; Join films from the beginning (instead of live); Station bumpers & chime (on by default). AMBIENT mode (B) hides everything but the TV; Esc exits.
 - Display polish: titles are cleaned at lineup build (niceTitle: ALL-CAPS → title case keeping acronyms, strips catalog codes like XD10344 / 72342 / 001, tidies quotes); descriptions clamp to 5 lines with more/less; History shows the channel; picture-in-picture hover controls disabled; color-scheme dark with dark scrollbars.
+- Phones: turning a phone sideways (or pressing FULL) switches to TV-fills-screen mode (`body.tvfull`): side panel hidden, control bar floats over the picture and appears on tap for ~3.5s. FULL uses real fullscreen of the whole page where the browser allows; iPhone Safari doesn't, so there it's a CSS fake (`fakefs`). Hover styles only apply on devices with a mouse; lit buttons are filled amber so on/off is obvious. The TV Guide shrinks its details panel on upright phones and goes side-by-side when sideways.
 - Users can add their own channels (plain words, or a pasted archive.org search link/query).
 
 ## Look and feel
