@@ -1,0 +1,37 @@
+# Télescope
+
+A channel-surfing web page that plays old films from the Internet Archive (archive.org) on a schedule, like live TV. Inspired by the feeling of 1970s educational films, nature documentaries and Boards of Canada. Personal project, aiming to become a real public site.
+
+## How it works
+- Everything is in one file: `index.html` (HTML + CSS + JS, no build step, no server).
+- **Channels are archive.org searches**, defined in `BASE_CHANNELS` (name, group, one-line theme, search query). Most search only archive.org's Ephemeral Films umbrella (collection:ephemera plus prelinger, avgeeks, educationalfilms, periscopefilm); channels with `any:true` search all of archive.org.
+- When a channel is first tuned each day, the page calls the archive.org advanced-search API, takes up to 250 of the most-downloaded results, shuffles them with a seed based on the date, then fetches metadata in batches until the channel has ~12 hours of programming (max 150 films), skipping repeat uploads of the same film (normalized-title match). It fetches each item's metadata to find a streamable `.mp4` and its length. The result is cached in localStorage for the day.
+- **Schedule**: each channel's lineup loops from local midnight, so tuning in lands partway through a film, like real TV. The lineup reshuffles at midnight.
+- Old films only: anything dated after 1999 is skipped, and the Broadcast channels (Classics, Public TV, Film Boards) also limit their searches by year, because station-credit searches otherwise pull in recent uploads (e.g. 2020 PBS Kids cartoons).
+- Themed (non-Broadcast) channels also exclude war, military, politics, newsreel, advertising/commercials and dramatized/feature-film subjects (Télescope is non-fiction); queries use specific subject phrases (e.g. "marine biology", not bare "sea").
+- Filters skip borrow-only (access-restricted) items, home movies, raw stock-footage reels, outtakes, and films under 90 seconds or over 2 hours.
+- Video streams straight from archive.org; this site hosts only the page.
+- DVR controls: RESTART (R) starts the current film over; dragging the On-now progress bar moves around in the film (never ahead of live); when behind, films keep playing in order from their beginnings, and GO LIVE (L) jumps back with a static burst. Implemented as a per-channel clock offset (`drift`) plus `dvr` = seconds behind live.
+- Progress bar has a round thumb, elapsed/total times and a "drag to rewind" hint (hidden after first scrub).
+- Sound & transitions: Télescope's own 3-note chime (A4 · E5 · C#6, WebAudio; deliberately NOT NBC's G-E-C, which is a registered sound mark) plays on tune-in (browsers need a click first) and in bumpers. A 5-stripe left-to-right wipe plays on every channel change; between films, a ~3s bumper (stripes, logo, "Up next", chime) covers the next film loading.
+- Settings drawer: Start muted; Join films from the beginning (instead of live); Station bumpers & chime (on by default). AMBIENT mode (B) hides everything but the TV; Esc exits.
+- Display polish: titles are cleaned at lineup build (niceTitle: ALL-CAPS → title case keeping acronyms, strips catalog codes like XD10344 / 72342 / 001, tidies quotes); descriptions clamp to 5 lines with more/less; History shows the channel; picture-in-picture hover controls disabled; color-scheme dark with dark scrollbars.
+- Users can add their own channels (plain words, or a pasted archive.org search link/query).
+
+## Look and feel
+- Deep blue-black palette. Brand color = phosphor green (#9dffa6) for the TÉLESCOPE logo everywhere (splash, side panel, guide); amber = "you are here" (current channel, active tab, selections); teal for headings. A thin 5-stripe rule (green, teal, amber, rust, cream) sits under the side-panel logo — the same stripes as the transitions.
+- Fonts: Pixelify Sans (CSS var --tv, size factor --tvk) for the logo, buttons, side panel and lists; on-screen TV overlays (channel number, lower third, NO SIGNAL) use VT323 (--scr), for a retro-TV look; all details are also in the side panel. Fraunces for body text.
+- Toggles: CRT (scanlines, vignette, rounded corners) and Warm (faded film color grade). Both on by default.
+- Static and hiss when changing channels; on-screen channel number; animated station ident on load (starfield, banded "lens" rings, a stripe band that streaks left to right, logo letters dropping in, sonar pulses; respects reduced-motion) with "tap to tune in" (a click is needed before browsers allow sound).
+- Side panel: logo + current channel on top; one view at a time, switched by a bottom tab bar (icons + labels, like a phone app): Now (on now, scrub bar, up next), Channels (grouped list + Make a channel), Guide (opens the TV Guide overlay), History (watched lately), Settings (options, about, credits). Last tab is remembered.
+- TV Guide overlay: Dish-style grid — channels as rows (sticky left column), time across (30-min header slots, 5.5px/min, 3/6/12/24h), program blocks sized by length, past programs dimmed, red now-line; right-hand details panel for the selected program (Watch now if live, link to archive.org). Tap a channel name or double-tap a live block to tune.
+
+## Channels (13, in groups)
+Atelier searches the ephemeral collections for art subjects PLUS all of archive.org for land/environmental/installation art and named artists (Christo, Goldsworthy, Calder, Smithson), 1930–1999; themed channels keep the off-topic filter even when searching wider.
+Living things: Field & Forest, Deep Water, Microcosm · Earth & sky: Cosmos 16mm, Restless Earth, Drift, Travelogue · Making things: Atelier, Lab Hour, Factory Floor · Broadcast: Classics (iconic Attenborough/Cousteau/Nat Geo/Cosmos-type TV), Public TV (public & educational TV docs), Film Boards (NFB, GPO/Crown, Film Australia, NZ National Film Unit, etc.). Type two digits to reach channels 10+.
+Note: much of the "Classics" material on archive.org is fan uploads that can disappear; the channel just searches for whatever is currently streamable.
+
+## Known limits / ideas
+- Must be served from a real web address (or opened as a local file in a desktop browser). iPhone Files preview and the Claude artifact preview won't run it.
+- Ideas not done yet: favorites (browser-only is easy; synced across devices needs a small backend); hide or reorder channels; a hand-curated "staff picks" channel; better quality scoring of search results; a shared server-side cache so every visitor doesn't hit archive.org's APIs.
+- Credit archive.org and Prelinger Archives on the page, and link to archive.org/donate. Don't copy another site's name or branding.
